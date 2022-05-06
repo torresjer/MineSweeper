@@ -8,6 +8,8 @@ App::~App() {}
 
 bool App::OnInit() 
 {
+	display = new MainWindow();
+	display->Show();
 	return true;
 }
 
