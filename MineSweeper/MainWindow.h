@@ -12,6 +12,8 @@ public:
 	int fieldHight = 10;
 	int fieldWidth = 10;
 	wxButton** btn;
+	int* minePosition = nullptr;
+	bool firstClick = true;
 
 	void OnButtonClicked(wxCommandEvent &evt);
 
