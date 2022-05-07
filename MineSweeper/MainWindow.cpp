@@ -10,11 +10,13 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "MineSweeper", wxPoint(30,
 	wxGridSizer* grid = new wxGridSizer(fieldWidth, fieldHight, 0, 0);
 
 	minePosition = new int[fieldWidth * fieldHight];
+	wxFont font(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 
 
 	for (int x = 0; x < fieldWidth; x++) {
 		for (int y = 0; y < fieldHight; y++) {
 			btn[y * fieldWidth + x] = new wxButton(this, 10000 + (y * fieldWidth + x));
+			btn[y * fieldWidth + x]->SetFont(font);
 			grid->Add(btn[y * fieldWidth + x], 1, wxEXPAND | wxALL);
 
 			btn[y * fieldWidth + x]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainWindow::OnButtonClicked, this);
@@ -52,42 +54,44 @@ void MainWindow::OnButtonClicked(wxCommandEvent &evt) {
 
 			firstClick = false;
 		}
-		//Disable Button, Preventing it from being pressed again
-		btn[y * fieldWidth + x]->Enable(false);
+		
+	}
+	//Disable Button, Preventing it from being pressed again
+	btn[y * fieldWidth + x]->Enable(false);
 
-		//Check if player hit mine 
-		if (minePosition[y * fieldWidth + x] == -1) {
+	//Check if player hit mine 
+	if (minePosition[y * fieldWidth + x] == -1) {
 
-			wxMessageBox("YOU'VE BEEN BLOWN UP SON!!! - GAME OVER");
+		wxMessageBox("YOU'VE BEEN BLOWN UP SON!!! - GAME OVER");
 
-			//reset game
-			firstClick = true;
-			for (int x = 0; x < fieldWidth; x++) {
-				for (int y = 0; y < fieldHight; y++) {
+		//reset game
+		firstClick = true;
+		for (int x = 0; x < fieldWidth; x++) {
+			for (int y = 0; y < fieldHight; y++) {
 
-					minePosition[y * fieldWidth + x] = 0;
-					btn[y * fieldWidth + x]->SetLabel("");
-					btn[y * fieldWidth + x]->Enable(true);
-				}
+				minePosition[y * fieldWidth + x] = 0;
+				btn[y * fieldWidth + x]->SetLabel("");
+				btn[y * fieldWidth + x]->Enable(true);
 			}
-		}
-		else {
-			//count Neighboring Mines
-			int mine_Count = 0;
-			for (int i = -1; i < 2; i++) {
-				for (int j = -1; j < 2; j++) {
-
-					if (x + i >= 0 && x + i < fieldWidth && y + j < fieldHight) {
-
-						if(minePosition[(y+j)*fieldWidth + (x + i)] == -1)
-							mine_Count++
-					}
-				}
-			}
-
-
 		}
 	}
+	else {
+		//count Neighboring Mines
+		int mine_Count = 0;
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
 
-	evt.Skip();
+				if (x + i >= 0 && x + i < fieldWidth && y + j < fieldHight) {
+
+					if (minePosition[(y + j) * fieldWidth + (x + i)] == -1)
+						mine_Count++;
+				}
+			}
+		}
+		//Update button lable to show mine count if > 0
+		if (mine_Count >= 0) {
+
+			btn[y * fieldWidth + x]->SetLabel(std::to_string(mine_Count));
+		}
+	}
 }
