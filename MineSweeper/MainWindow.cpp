@@ -52,8 +52,41 @@ void MainWindow::OnButtonClicked(wxCommandEvent &evt) {
 
 			firstClick = false;
 		}
+		//Disable Button, Preventing it from being pressed again
+		btn[y * fieldWidth + x]->Enable(false);
+
+		//Check if player hit mine 
+		if (minePosition[y * fieldWidth + x] == -1) {
+
+			wxMessageBox("YOU'VE BEEN BLOWN UP SON!!! - GAME OVER");
+
+			//reset game
+			firstClick = true;
+			for (int x = 0; x < fieldWidth; x++) {
+				for (int y = 0; y < fieldHight; y++) {
+
+					minePosition[y * fieldWidth + x] = 0;
+					btn[y * fieldWidth + x]->SetLabel("");
+					btn[y * fieldWidth + x]->Enable(true);
+				}
+			}
+		}
+		else {
+			//count Neighboring Mines
+			int mine_Count = 0;
+			for (int i = -1; i < 2; i++) {
+				for (int j = -1; j < 2; j++) {
+
+					if (x + i >= 0 && x + i < fieldWidth && y + j < fieldHight) {
+
+						if(minePosition[(y+j)*fieldWidth + (x + i)] == -1)
+							mine_Count++
+					}
+				}
+			}
 
 
+		}
 	}
 
 	evt.Skip();
